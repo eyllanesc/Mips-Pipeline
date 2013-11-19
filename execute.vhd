@@ -10,26 +10,26 @@ USE IEEE.STD_LOGIC_SIGNED.ALL;
 
 ENTITY EXEcute IS
   PORT(	
-		Opcode_ex 				: IN 	STD_LOGIC_VECTOR( 5 DOWNTO 0); -- for arithmetic/logic I-format instructions
-		RegDst_ex				: IN	STD_LOGIC;
-		ALUOp_ex 				: IN 	STD_LOGIC_VECTOR( 1 DOWNTO 0);
-		ALUSrc_ex 				: IN 	STD_LOGIC;
-		PC_plus_4_ex 			: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-		Read_data_1_ex			: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-		Read_data_2_ex			: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-		Sign_extend_ex			: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		Opcode_ex 		: IN 	STD_LOGIC_VECTOR( 5 DOWNTO 0); -- for arithmetic/logic I-format instructions
+		RegDst_ex		: IN	STD_LOGIC;
+		ALUOp_ex 		: IN 	STD_LOGIC_VECTOR( 1 DOWNTO 0);
+		ALUSrc_ex 		: IN 	STD_LOGIC;
+		PC_plus_4_ex 		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		Read_data_1_ex		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		Read_data_2_ex		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		Sign_extend_ex		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
 		write_register_rt_ex	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0);
 		write_register_rd_ex	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0);
-		Zero_ex 					: OUT	STD_LOGIC;
-		Overflow_ex				: OUT	STD_LOGIC;
-		Negative_ex				: OUT STD_LOGIC;
-		Add_Result_ex 			: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
-		write_data_ex			: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
-		write_register_ex		: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0);
-		ForwardA					: IN	STD_LOGIC_VECTOR( 1 DOWNTO 0); -- for FU
-		ForwardB					: IN	STD_LOGIC_VECTOR( 1 DOWNTO 0); -- for FU
+		Zero_ex 		: OUT	STD_LOGIC;
+		Overflow_ex		: OUT	STD_LOGIC;
+		Negative_ex		: OUT 	STD_LOGIC;
+		Add_Result_ex 		: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		write_data_ex		: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		write_register_ex	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0);
+		ForwardA		: IN	STD_LOGIC_VECTOR( 1 DOWNTO 0); -- for FU
+		ForwardB		: IN	STD_LOGIC_VECTOR( 1 DOWNTO 0); -- for FU
 		ALU_Result_mem 		: IN	STD_LOGIC_VECTOR(31 DOWNTO 0); -- forwarded from MEM
-		write_data_wb			: IN	STD_LOGIC_VECTOR(31 DOWNTO 0)  -- forwarded from WB
+		write_data_wb		: IN	STD_LOGIC_VECTOR(31 DOWNTO 0)  -- forwarded from WB
 		);
 END EXEcute;
 
@@ -46,19 +46,19 @@ ARCHITECTURE behavior OF EXEcute IS
 BEGIN
 
 -- TODO: add necessary concurrent assignments
-	write_register_ex <= write_register_rt_ex when RegDst_ex ='0' else
-								write_register_rd_ex;
+	write_register_ex 	<= 	write_register_rt_ex when RegDst_ex ='0' else
+					write_register_rd_ex;
 	write_data_ex		<=	pre_Binput;
 	Add_Result_ex		<=	Sign_extend_ex(29 downto 0)&"00"+PC_plus_4_ex;
-	pre_Binput			<=	Read_data_2_ex	WHEN 	ForwardB="00"	ELSE
-								write_data_wb 	WHEN	ForwardA="01" 	ELSE
-								ALU_Result_mem WHEN 	ForwardA="10"	ELSE
-								X"XXXXXXXX";
-	Binput				<=	Pre_Binput	WHEN 	ALUSrc_ex='0' 	ELSE
-								Sign_extend_ex;
-	Ainput				<=	Read_data_1_ex WHEN 	ForwardA="00" 	ELSE
-								write_data_wb 	WHEN	ForwardA="01" 	ELSE
-								ALU_Result_mem WHEN 	ForwardA="10"	ELSE
+	pre_Binput		<=	Read_data_2_ex	WHEN 	ForwardB="00"	ELSE
+					write_data_wb 	WHEN	ForwardA="01" 	ELSE
+					ALU_Result_mem  WHEN 	ForwardA="10"	ELSE
+					X"XXXXXXXX" 	WHEN	others;
+	Binput			<=	Pre_Binput	WHEN 	ALUSrc_ex='0' 	ELSE
+					Sign_extend_ex;
+	Ainput			<=	Read_data_1_ex 	WHEN 	ForwardA="00" 	ELSE
+					write_data_wb 	WHEN	ForwardA="01" 	ELSE
+					ALU_Result_mem 	WHEN 	ForwardA="10"	ELSE
 								X"XXXXXXXX";
 								
 	PROCESS (Opcode_ex, Func_opcode, ALUOp_ex)
@@ -133,9 +133,9 @@ BEGIN
 		END CASE;
 	END PROCESS;
 	-- add a second process to generate the ALU_result_ex and Overflow_ex
-	ALU_Result_ex	<=	X"0000000" & B"000" & ALU_output_mux(31)	WHEN (ALU_ctl = "0100" or ALU_ctl="0101") ELSE 
-						ALU_output_mux(31 DOWNTO 0);
-	Zero_ex	<=	'1'	WHEN ALU_result_ex = X"00000000" ELSE '0';
+	ALU_Result_ex	<=	X"0000000" & B"000" & ALU_output_mux(31) WHEN (ALU_ctl = "0100" or ALU_ctl="0101") ELSE 
+				ALU_output_mux(31 DOWNTO 0);
+	Zero_ex		<=	'1'	WHEN ALU_result_ex = X"00000000" ELSE '0';
 	Overflow_ex	<=	(ALU_result_ex(31) and (not Ainput(31)) and (not Binput(31)))or((not ALU_result_ex(31)) and Ainput(31) and Binput(31));
 	Negative_ex	<=	ALU_result_ex(31);
 END behavior;

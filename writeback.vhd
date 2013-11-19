@@ -9,7 +9,7 @@ ENTITY WriteBack IS
   PORT(	
 		read_data_wb	: IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
 		ALU_result_wb	: IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
-		MemtoReg_wb		: IN  STD_LOGIC;
+		MemtoReg_wb	: IN  STD_LOGIC;
 		write_data_wb	: OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
 	  );
 END WriteBack;

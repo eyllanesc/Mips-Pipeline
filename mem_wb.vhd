@@ -7,18 +7,18 @@ USE IEEE.STD_LOGIC_1164.ALL;
 
 ENTITY mem_wb IS
    PORT(
-		RegWrite_mem 		: IN 	STD_LOGIC;
-		MemtoReg_mem 		: IN	STD_LOGIC;
-		read_data_mem		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-		ALU_Result_mem 	: IN	STD_LOGIC_VECTOR(31 DOWNTO 0);
-		write_register_mem: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0);
-		RegWrite_wb 		: OUT 	STD_LOGIC;
-		MemtoReg_wb 		: OUT	STD_LOGIC;
-		read_data_wb		: OUT 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-		ALU_Result_wb 		: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
-		write_register_wb	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0);
-		clock					: IN	STD_LOGIC;
-		reset					: IN 	STD_LOGIC
+	RegWrite_mem 		: IN 	STD_LOGIC;
+	MemtoReg_mem 		: IN	STD_LOGIC;
+	read_data_mem		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+	ALU_Result_mem 		: IN	STD_LOGIC_VECTOR(31 DOWNTO 0);
+	write_register_mem	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0);
+	RegWrite_wb 		: OUT 	STD_LOGIC;
+	MemtoReg_wb 		: OUT	STD_LOGIC;
+	read_data_wb		: OUT 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+	ALU_Result_wb 		: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
+	write_register_wb	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0);
+	clock			: IN	STD_LOGIC;
+	reset			: IN 	STD_LOGIC
 	   );
 
 END mem_wb;
@@ -33,7 +33,7 @@ BEGIN
 				MemtoReg_wb 		<=	(others=>'0');
 				read_data_wb		<=	(others=>'0');
 				ALU_Result_wb 		<=	(others=>'0');
-				write_register_wb<=	(others=>'0');
+				write_register_wb	<=	(others=>'0');
 			ELSIF	(clock'event and clock='1')	THEN
 				RegWrite_wb 		<=	RegWrite_mem;
 				MemtoReg_wb 		<=	MemtoReg_mem;

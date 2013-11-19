@@ -7,14 +7,14 @@ USE IEEE.STD_LOGIC_1164.ALL;
 
 ENTITY if_id IS
 	PORT(
-		PC_plus_4_if		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		PC_plus_4_if	: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
 		Instruction_if	: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-		PC_plus_4_id		: OUT 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		PC_plus_4_id	: OUT 	STD_LOGIC_VECTOR(31 DOWNTO 0);
 		Instruction_id	: OUT 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-		if_id_write		: IN	STD_LOGIC;
-		if_flush			: IN	STD_LOGIC;
-		clock				: IN	STD_LOGIC;
-		reset				: IN 	STD_LOGIC
+		if_id_write	: IN	STD_LOGIC;
+		if_flush	: IN	STD_LOGIC;
+		clock		: IN	STD_LOGIC;
+		reset		: IN 	STD_LOGIC
 		);
 END if_id;
 
