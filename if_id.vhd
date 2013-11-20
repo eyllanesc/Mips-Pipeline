@@ -25,14 +25,15 @@ BEGIN
 	PROCESS(clock, reset)
 		BEGIN
 			IF(reset='1') THEN
-					PC_plus_4_id	<=	X"00000000";
+				PC_plus_4_id	<=	X"00000000";
 			ELSIF(clock'event and clock='1')	THEN
 				IF (if_id_write='1') THEN
-						PC_plus_4_id	<=	PC_plus_4_if;
-						IF(if_flush='0')	THEN
-							Instruction_id	<=	Instruction_if;
-						ELSE
-							Instruction_id	<=	(others=>'0')
+					PC_plus_4_id	<=	PC_plus_4_if;
+					IF(if_flush='0')	THEN
+						Instruction_id	<=	Instruction_if;
+					ELSE
+						Instruction_id	<=	(others=>'0');
+					END IF;
 				END IF;
 			END IF;
 	END PROCESS;

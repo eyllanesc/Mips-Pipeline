@@ -19,7 +19,7 @@ ENTITY mem_wb IS
 	write_register_wb	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0);
 	clock			: IN	STD_LOGIC;
 	reset			: IN 	STD_LOGIC
-	   );
+	);
 
 END mem_wb;
 
@@ -40,5 +40,6 @@ BEGIN
 				read_data_wb		<=	read_data_mem;
 				ALU_Result_wb 		<=	ALU_Result_mem;
 				write_register_wb	<=	write_register_mem;
+			END IF;
 	END PROCESS;
 END behavior;

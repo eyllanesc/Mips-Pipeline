@@ -7,44 +7,44 @@ USE IEEE.STD_LOGIC_1164.ALL;
 
 ENTITY id_ex IS
    PORT(
-	Jump_id			: IN	STD_LOGIC;
-	RegWrite_id 		: IN 	STD_LOGIC;
-	MemtoReg_id 		: IN 	STD_LOGIC;
-	Branch_id 		: IN 	STD_LOGIC;
-	MemRead_id 		: IN 	STD_LOGIC;
-	MemWrite_id 		: IN 	STD_LOGIC;
-	RegDst_id 		: IN 	STD_LOGIC;
-	ALUOp_id 		: IN 	STD_LOGIC_VECTOR(1 DOWNTO 0);
-	ALUSrc_id 		: IN 	STD_LOGIC;
-	Opcode_id		: IN	STD_LOGIC_VECTOR( 5 DOWNTO 0);
-	PC_plus_4_id 		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-	read_data_1_id		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-	read_data_2_id		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-	Sign_extend_id 		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-	write_register_rt_id	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0);
-	write_register_rd_id	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0);
-	read_register_rs_id	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0); -- for FU
-	read_register_rt_id	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0); -- for FU
-	Jump_ex			: OUT	STD_LOGIC;
-	RegWrite_ex 		: OUT 	STD_LOGIC;
-	MemtoReg_ex 		: OUT 	STD_LOGIC;
-	Branch_ex 		: OUT 	STD_LOGIC;
-	MemRead_ex 		: OUT 	STD_LOGIC;
-	MemWrite_ex 		: OUT 	STD_LOGIC;
-	RegDst_ex 		: OUT 	STD_LOGIC;
-	ALUOp_ex 		: OUT 	STD_LOGIC_VECTOR(1 DOWNTO 0);
-	ALUSrc_ex 		: OUT 	STD_LOGIC;
-	Opcode_ex		: OUT	STD_LOGIC_VECTOR( 5 DOWNTO 0);
-	PC_plus_4_ex 		: OUT 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-	read_data_1_ex		: OUT 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-	read_data_2_ex		: OUT 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-	Sign_extend_ex 		: OUT 	STD_LOGIC_VECTOR(31 DOWNTO 0);
-	write_register_rt_ex	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0);
-	write_register_rd_ex	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0);
-	read_register_rs_ex	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0); -- for FU
-	read_register_rt_ex	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0); -- for FU
-	clock			: IN	STD_LOGIC;
-	reset			: IN 	STD_LOGIC
+		Jump_id			: IN	STD_LOGIC;
+		RegWrite_id 		: IN 	STD_LOGIC;
+		MemtoReg_id 		: IN 	STD_LOGIC;
+		Branch_id 		: IN 	STD_LOGIC_VECTOR(2 DOWNTO 0);
+		MemRead_id 		: IN 	STD_LOGIC;
+		MemWrite_id 		: IN 	STD_LOGIC;
+		RegDst_id 		: IN 	STD_LOGIC;
+		ALUOp_id 		: IN 	STD_LOGIC_VECTOR(1 DOWNTO 0);
+		ALUSrc_id 		: IN 	STD_LOGIC;
+		Opcode_id		: IN	STD_LOGIC_VECTOR( 5 DOWNTO 0);
+		PC_plus_4_id 		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		read_data_1_id		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		read_data_2_id		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		Sign_extend_id 		: IN 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		write_register_rt_id	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0);
+		write_register_rd_id	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0);
+		read_register_rs_id	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0); -- for FU
+		read_register_rt_id	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0); -- for FU
+		Jump_ex			: OUT	STD_LOGIC;
+		RegWrite_ex 		: OUT 	STD_LOGIC;
+		MemtoReg_ex 		: OUT 	STD_LOGIC;
+		Branch_ex 		: OUT 	STD_LOGIC_VECTOR(2 DOWNTO 0);
+		MemRead_ex 		: OUT 	STD_LOGIC;
+		MemWrite_ex 		: OUT 	STD_LOGIC;
+		RegDst_ex 		: OUT 	STD_LOGIC;
+		ALUOp_ex 		: OUT 	STD_LOGIC_VECTOR(1 DOWNTO 0);
+		ALUSrc_ex 		: OUT 	STD_LOGIC;
+		Opcode_ex		: OUT	STD_LOGIC_VECTOR( 5 DOWNTO 0);
+		PC_plus_4_ex 		: OUT 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		read_data_1_ex		: OUT 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		read_data_2_ex		: OUT 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		Sign_extend_ex 		: OUT 	STD_LOGIC_VECTOR(31 DOWNTO 0);
+		write_register_rt_ex	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0);
+		write_register_rd_ex	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0);
+		read_register_rs_ex	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0); -- for FU
+		read_register_rt_ex	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0); -- for FU
+		clock			: IN	STD_LOGIC;
+		reset			: IN 	STD_LOGIC
 	   );
 END id_ex;
 
@@ -62,7 +62,7 @@ BEGIN
 			MemWrite_ex		<=	(others=>'0');
 			RegDst_ex		<=	(others=>'0');
 			Aluop_ex		<=	(others=>'0');
-			AluSrc_ex		<= 	(others=>'0');
+			AluSrc_ex		<=	(others=>'0');
 			Opcode_ex		<= 	(others=>'0');
 			PC_plus_4_ex		<= 	(others=>'0');
 			read_data_1_ex		<= 	(others=>'0');

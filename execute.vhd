@@ -22,7 +22,7 @@ ENTITY EXEcute IS
 		write_register_rd_ex	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0);
 		Zero_ex 		: OUT	STD_LOGIC;
 		Overflow_ex		: OUT	STD_LOGIC;
-		Negative_ex		: OUT 	STD_LOGIC;
+		Negative_ex		: OUT STD_LOGIC;
 		Add_Result_ex 		: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
 		write_data_ex		: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
 		write_register_ex	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0);
@@ -35,39 +35,35 @@ END EXEcute;
 
 -- TODO: Implement the behavioral description of EXE stage
 ARCHITECTURE behavior OF EXEcute IS
-
-	SIGNAL Func_opcode	: 	STD_LOGIC_VECTOR(5 DOWNTO 0);
-	SIGNAL ALU_ctl			: 	STD_LOGIC_VECTOR(3 DOWNTO 0);
-	SIGNAL Ainput,	Binput:	STD_LOGIC_VECTOR(31 DOWNTO 0);
-	SIGNAL ALU_output_mux:	STD_LOGIC_VECTOR(31 DOWNTO 0);
-	SIGNAL pre_Binput		:	STD_LOGIC_VECTOR(31 DOWNTO 0);
 -- TODO: you may need to include more signals for easier implementation
-	
+	SIGNAL Func_opcode	: 	STD_LOGIC_VECTOR(5 DOWNTO 0);
+	SIGNAL ALU_ctl		: 	STD_LOGIC_VECTOR(3 DOWNTO 0);
+	SIGNAL Ainput,	Binput	:	STD_LOGIC_VECTOR(31 DOWNTO 0);
+	SIGNAL ALU_output_mux	:	STD_LOGIC_VECTOR(31 DOWNTO 0);
+	SIGNAL pre_Binput	:	STD_LOGIC_VECTOR(31 DOWNTO 0);	
 BEGIN
-
 -- TODO: add necessary concurrent assignments
-	write_register_ex 	<= 	write_register_rt_ex when RegDst_ex ='0' else
+	write_register_ex 	<=	write_register_rt_ex	WHEN	RegDst_ex ='0'	ELSE
 					write_register_rd_ex;
 	write_data_ex		<=	pre_Binput;
 	Add_Result_ex		<=	Sign_extend_ex(29 downto 0)&"00"+PC_plus_4_ex;
 	pre_Binput		<=	Read_data_2_ex	WHEN 	ForwardB="00"	ELSE
 					write_data_wb 	WHEN	ForwardA="01" 	ELSE
-					ALU_Result_mem  WHEN 	ForwardA="10"	ELSE
-					X"XXXXXXXX" 	WHEN	others;
+					ALU_Result_mem WHEN 	ForwardA="10"	ELSE
+					(others => 'X');
 	Binput			<=	Pre_Binput	WHEN 	ALUSrc_ex='0' 	ELSE
 					Sign_extend_ex;
-	Ainput			<=	Read_data_1_ex 	WHEN 	ForwardA="00" 	ELSE
+	Ainput			<=	Read_data_1_ex	WHEN 	ForwardA="00" 	ELSE
 					write_data_wb 	WHEN	ForwardA="01" 	ELSE
 					ALU_Result_mem 	WHEN 	ForwardA="10"	ELSE
-								X"XXXXXXXX";
-								
+					(others => 'X');			
 	PROCESS (Opcode_ex, Func_opcode, ALUOp_ex)
 	BEGIN
 		-- something is missing here, complete!
 		CASE ALUOp_ex IS
 			WHEN "00" => ALU_ctl <= B"0000"; -- lw/sw: ALU performs add (Ainput with Binput, signed)
 			WHEN "01" => ALU_ctl <= B"0010"; -- beq  : ALU performs sub (Ainput with Binput, signed), now branch operations
-			WHEN "10" =>	ForwardA 
+			WHEN "10" => 
 				CASE Func_opcode IS
 					WHEN "100000" => ALU_ctl <= B"0000"; -- add  rd,rs,rt
 					WHEN "100001" => ALU_ctl <= B"0001"; -- addu rd,rs,rt
@@ -129,13 +125,14 @@ BEGIN
 			WHEN "1110" => ALU_output_mux <= Ainput AND X"0000"&Binput(15 downto 0);
 			-- ALU performs ALUresult = A_input OR B_input
 			WHEN "1111" => ALU_output_mux <= Ainput OR X"0000"&Binput(15 downto 0);
-			WHEN OTHERS => ALU_output_mux <= (others => 'X') ;
+			WHEN OTHERS => ALU_output_mux <= (OTHERS => 'X') ;
 		END CASE;
 	END PROCESS;
 	-- add a second process to generate the ALU_result_ex and Overflow_ex
-	ALU_Result_ex	<=	X"0000000" & B"000" & ALU_output_mux(31) WHEN (ALU_ctl = "0100" or ALU_ctl="0101") ELSE 
+	ALU_Result_ex	<=	X"0000000" & B"000" & ALU_output_mux(31)	WHEN (ALU_ctl = "0100" OR ALU_ctl="0101") ELSE 
 				ALU_output_mux(31 DOWNTO 0);
-	Zero_ex		<=	'1'	WHEN ALU_result_ex = X"00000000" ELSE '0';
-	Overflow_ex	<=	(ALU_result_ex(31) and (not Ainput(31)) and (not Binput(31)))or((not ALU_result_ex(31)) and Ainput(31) and Binput(31));
+	Zero_ex	<=	'1'	WHEN	ALU_result_ex = X"00000000"	ELSE
+			'0';
+	Overflow_ex	<=	(ALU_result_ex(31) AND (NOT Ainput(31)) AND (NOT Binput(31))) OR ((NOT ALU_result_ex(31)) AND Ainput(31) AND Binput(31));
 	Negative_ex	<=	ALU_result_ex(31);
 END behavior;
