@@ -11,12 +11,12 @@ ENTITY MIPS IS
 	reset		: IN	STD_LOGIC;
 	clock		: IN 	STD_LOGIC; 
 	PC		: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
-     	Instruction_out	: OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+   Instruction_out	: OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 	read_data_1_out	: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
 	read_data_2_out	: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
 	ALU_result_out	: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
 	read_data_out	: OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-	Branch_out	: OUT	STD_LOGIC;
+	Branch_out	: OUT	STD_LOGIC_VECTOR(2 DOWNTO 0);
 	Zero_out	: OUT	STD_LOGIC;
 	Overflow_out	: OUT	STD_LOGIC;
 	Memwrite_out	: OUT	STD_LOGIC; 
@@ -67,6 +67,7 @@ ARCHITECTURE structure OF MIPS IS
 		read_register_rt_id	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0); -- for FU
 		write_data_id		: IN	STD_LOGIC_VECTOR(31 DOWNTO 0);
 		write_register_id	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0);
+		jump_address_id	: OUT STD_LOGIC_VECTOR(25 DOWNTO 0);
 		clock			: IN	STD_LOGIC;
 		reset			: IN 	STD_LOGIC
 		 );
@@ -93,7 +94,7 @@ ARCHITECTURE structure OF MIPS IS
 		Jump_id			: IN	STD_LOGIC;
 		RegWrite_id 		: IN 	STD_LOGIC;
 		MemtoReg_id 		: IN 	STD_LOGIC;
-		Branch_id 		: IN 	STD_LOGIC;
+		Branch_id 		: IN 	STD_LOGIC_VECTOR(2 DOWNTO 0);
 		MemRead_id 		: IN 	STD_LOGIC;
 		MemWrite_id 		: IN 	STD_LOGIC;
 		RegDst_id 		: IN 	STD_LOGIC;
@@ -111,7 +112,7 @@ ARCHITECTURE structure OF MIPS IS
 		Jump_ex			: OUT	STD_LOGIC;
 		RegWrite_ex 		: OUT 	STD_LOGIC;
 		MemtoReg_ex 		: OUT 	STD_LOGIC;
-		Branch_ex 		: OUT 	STD_LOGIC;
+		Branch_ex 		: OUT 	STD_LOGIC_VECTOR(2 DOWNTO 0);
 		MemRead_ex 		: OUT 	STD_LOGIC;
 		MemWrite_ex 		: OUT 	STD_LOGIC;
 		RegDst_ex 		: OUT 	STD_LOGIC;
@@ -158,7 +159,7 @@ ARCHITECTURE structure OF MIPS IS
 	PORT(
 		RegWrite_ex 		: IN 	STD_LOGIC;
 		MemtoReg_ex 		: IN 	STD_LOGIC;
-		Branch_ex 		: IN 	STD_LOGIC;
+		Branch_ex 		: IN 	STD_LOGIC_VECTOR(2 DOWNTO 0);
 		MemRead_ex 		: IN 	STD_LOGIC;
 		MemWrite_ex 		: IN 	STD_LOGIC;
 		Add_Result_ex 		: IN	STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -170,7 +171,7 @@ ARCHITECTURE structure OF MIPS IS
 		write_register_ex	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0);
 		RegWrite_mem 		: OUT 	STD_LOGIC;
 		MemtoReg_mem 		: OUT	STD_LOGIC;
-		Branch_mem 		: OUT 	STD_LOGIC;
+		Branch_mem 		: OUT 	STD_LOGIC_VECTOR(2 DOWNTO 0);
 		MemRead_mem 		: OUT 	STD_LOGIC;
 		MemWrite_mem 		: OUT 	STD_LOGIC;
 		Add_Result_mem 		: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -186,7 +187,7 @@ ARCHITECTURE structure OF MIPS IS
 	END COMPONENT;
   COMPONENT MEMory
 	PORT(
-		Branch_mem	: IN	STD_LOGIC;
+		Branch_mem	: IN	STD_LOGIC_VECTOR(2 DOWNTO 0);
 		Zero_mem	: IN	STD_LOGIC;
 		Overflow_mem	: IN 	STD_LOGIC;
 		Negative_mem	: IN 	STD_LOGIC;
@@ -290,7 +291,6 @@ ARCHITECTURE structure OF MIPS IS
 	SIGNAL read_data_1_ex		:	STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL read_data_2_ex		:	STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL Sign_extend_ex		:	STD_LOGIC_VECTOR(31 DOWNTO 0);
-	SIGNAL Opcode_ex		:	STD_LOGIC_VECTOR(5 DOWNTO 0);
 	SIGNAL write_register_rt_ex	: 	STD_LOGIC_VECTOR(4 DOWNTO 0);
 	SIGNAL write_register_rd_ex	:	STD_LOGIC_VECTOR(4 DOWNTO 0);
 	SIGNAL read_register_rs_ex	:	STD_LOGIC_VECTOR(4 DOWNTO 0);
@@ -302,31 +302,48 @@ ARCHITECTURE structure OF MIPS IS
 	SIGNAL Zero_ex			:  	STD_LOGIC;
 	SIGNAL Overflow_ex		:  	STD_LOGIC;
 	SIGNAL Negative_ex		: 	STD_LOGIC;
+	SIGNAL Add_Result_ex 	:  STD_LOGIC_VECTOR(31 DOWNTO 0);
+	SIGNAL ALU_Result_ex    :  STD_LOGIC_VECTOR(31 DOWNTO 0);
+	SIGNAL write_data_ex    :  STD_LOGIC_VECTOR(31 DOWNTO 0);
+	SIGNAL write_register_ex:	STD_LOGIC_VECTOR(4 DOWNTO 0);
 	SIGNAL RegWrite_mem		:	STD_LOGIC;
 	SIGNAL MemtoReg_mem		:	STD_LOGIC;
-	SIGNAL Branch_mem		:	STD_LOGIC_VECTOR(2 DOWNTO 0);
+	SIGNAL Branch_mem			:	STD_LOGIC_VECTOR(2 DOWNTO 0);
 	SIGNAL MemRead_mem		:	STD_LOGIC;
 	SIGNAL MemWrite_mem		:	STD_LOGIC;
-	SIGNAL Add_Result_mem 		:	STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL Zero_mem			:	STD_LOGIC;
 	SIGNAL Overflow_mem		:	STD_LOGIC;
 	SIGNAL Negative_mem		:	STD_LOGIC;
 	SIGNAL write_data_mem		:	STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL write_register_mem	:	STD_LOGIC_VECTOR(4 DOWNTO 0);
+	SIGNAL read_data_mem :	STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL MemtoReg_wb		:	STD_LOGIC;
 	SIGNAL read_data_wb		:	STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL ALU_Result_wb		:	STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL write_register_wb	:	STD_LOGIC_VECTOR(4 DOWNTO 0);
+	SIGNAL Jump_id					:	STD_LOGIC;
+	SIGNAL Jump_ex					:	STD_LOGIC;
+	SIGNAL branch_flush			: STD_LOGIC;
+	SIGNAL jump_address_id		: STD_LOGIC_VECTOR(25 downto 0);
 BEGIN
 	-- TODO: copy important signals to output pins 
-	 
+   Instruction_out	<=Instruction_if;
+	read_data_1_out	<= read_data_1_ex;
+	read_data_2_out	<= read_data_2_ex;
+	ALU_result_out	<= ALU_Result_ex;
+	read_data_out	<= read_data_wb;
+	Branch_out	<= Branch_ex;
+	Zero_out	<= Zero_ex;
+	Overflow_out	<= Overflow_ex;
+	Memwrite_out	<= MemWrite_ex; 
+	Regwrite_out	<= RegWrite_ex;
 	-- TODO: connect the MIPS components   
 	IFE: IFetch
 	PORT MAP(			
 		PCSrc_if	=> 	PCSrc_mem,
 		PCwrite		=> 	PCwrite,
-		Jump_if		=> ,
-		jump_address_if	=> ,
+		Jump_if		=> Jump_ex,
+		jump_address_if	=> jump_address_id,
 		Add_result_if 	=> 	Add_Result_mem, 
 		PC_plus_4_if	=> 	PC_plus_4_if,
 		PC_out_if 	=> 	PC,
@@ -341,7 +358,7 @@ BEGIN
 		PC_plus_4_id	=>	PC_plus_4_id,
 		Instruction_id	=>	Instruction_id,
 		if_id_write	=> 	if_id_write,
-		if_flush	=> ,
+		if_flush	=> branch_flush,
 		clock		=>	clock,
 		reset		=>	reset
 		);
@@ -359,12 +376,13 @@ BEGIN
 		read_register_rt_id	=>	read_register_rt_id,
 		write_data_id		=> 	write_data_wb,
 		write_register_id	=> 	write_register_wb,
+		jump_address_id	=> 	jump_address_id,
 		clock			=> 	clock,
 		reset			=> 	reset
 		);
 	ID2EXE: id_ex
 		PORT MAP(
-		Jump_id			=> ,
+		Jump_id			=> Jump_id,	
 		RegWrite_id 		=>	RegWrite_id,
 		MemtoReg_id 		=> 	MemtoReg_id,
 		Branch_id 		=> 	Branch_id,
@@ -382,7 +400,7 @@ BEGIN
 		write_register_rd_id	=> 	write_register_rd_id,
 		read_register_rs_id	=> 	read_register_rs_id,
 		read_register_rt_id	=> 	read_register_rt_id,
-		Jump_ex			=> ,
+		Jump_ex			=> Jump_ex,
 		RegWrite_ex 		=> 	RegWrite_ex,
 		MemtoReg_ex 		=> 	MemtoReg_ex,
 		Branch_ex 		=> 	Branch_ex,
@@ -406,7 +424,7 @@ BEGIN
 	CTL: control
 	PORT MAP(
 		Instruction_id	=>	Instruction_id,
-		Jump_id		=> ,
+		Jump_id		=> jump_id,
 		RegWrite_id	=> 	RegWrite_id,
 		MemtoReg_id 	=> 	MemtoReg_id,
 		Branch_id	=> 	Branch_id,
@@ -416,7 +434,7 @@ BEGIN
 		ALUop_id 	=> 	ALUop_id,
 		ALUSrc_id	=> 	ALUSrc_id,
 		bubble		=> 	bubble,
-		id_flush	=> 
+		id_flush	=> branch_flush
 		);
 
 	EXE: EXEcute
@@ -483,7 +501,7 @@ BEGIN
 		ALU_Result_mem	=> 	ALU_Result_mem,
 		write_data_mem	=> 	write_data_mem,
 		PCSrc_mem	=> 	PCSrc_mem,
-		branch_flush	=> ,
+		branch_flush	=> branch_flush,
 		read_data_mem	=> 	read_data_mem,
 		clkd		=> 	clock
 			);

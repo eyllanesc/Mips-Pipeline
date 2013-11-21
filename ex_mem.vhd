@@ -9,7 +9,7 @@ ENTITY ex_mem IS
    PORT(
 		RegWrite_ex 		: IN 	STD_LOGIC;
 		MemtoReg_ex 		: IN 	STD_LOGIC;
-		Branch_ex 		: IN 	STD_LOGIC;
+		Branch_ex 		: IN 	STD_LOGIC_VECTOR(2 DOWNTO 0);
 		MemRead_ex 		: IN 	STD_LOGIC;
 		MemWrite_ex 		: IN 	STD_LOGIC;
 		Add_Result_ex 		: IN	STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -21,7 +21,7 @@ ENTITY ex_mem IS
 		write_register_ex	: IN	STD_LOGIC_VECTOR( 4 DOWNTO 0);
 		RegWrite_mem 		: OUT STD_LOGIC;
 		MemtoReg_mem 		: OUT	STD_LOGIC;
-		Branch_mem 		: OUT STD_LOGIC;
+		Branch_mem 		: OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
 		MemRead_mem 		: OUT STD_LOGIC;
 		MemWrite_mem 		: OUT STD_LOGIC;
 		Add_Result_mem 		: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -42,15 +42,15 @@ BEGIN
 	PROCESS(clock, reset) 
 		BEGIN
 			IF(reset='1') THEN
-				RegWrite_mem		<=	(others=>'0');
-				MemtoReg_mem 		<=	(others=>'0');
+				RegWrite_mem		<=	'0';
+				MemtoReg_mem 		<=	'0';
 				Branch_mem 		<=	(others=>'0');
-				MemRead_mem 		<=	(others=>'0');
-				MemWrite_mem 		<=	(others=>'0');
+				MemRead_mem 		<=	'0';
+				MemWrite_mem 		<=	'0';
 				Add_Result_mem 		<=	(others=>'0');
-				Zero_mem		<=	(others=>'0');
-				Overflow_mem		<=	(others=>'0');
-				Negative_mem		<=	(others=>'0');
+				Zero_mem		<=	'0';
+				Overflow_mem		<=	'0';
+				Negative_mem		<=	'0';
 				ALU_Result_mem 		<=	(others=>'0');
 				write_data_mem		<=	(others=>'0');
 				write_register_mem	<=	(others=>'0');

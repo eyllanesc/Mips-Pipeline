@@ -27,7 +27,7 @@ END IFetch;
 
 ARCHITECTURE behavior OF Ifetch IS
 -- some convenient signals. You may need to add more signals
-	SIGNAL PC, PC_plus_4, PCBranch	: STD_LOGIC_VECTOR(31 DOWNTO 0);
+	SIGNAL PC, PC_plus_4, PCBranch, Next_PC,Jump_address	: STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL Read_Address 		: STD_LOGIC_VECTOR( 9 DOWNTO 0);
 	SIGNAL clock_int		: STD_LOGIC;
 	
@@ -55,8 +55,10 @@ BEGIN
 		PC_plus_4	<=	PC+4;
 	-- TODO: Specify how the PC is updated
 		PCBranch 	<= 	PC_plus_4	WHEN	PCSrc_if='0'	ELSE
- 		Add_result_if; 
-		PC		<= 	Jump_address_if WHEN 	jump_if='1' 	ELSE
+ 		Add_result_if;
+		Jump_address<=PC_plus_4(31 downto 26)&Jump_address_if;
+		--Jump_address(25 downto 0)<=Jump_address_if;
+		Next_PC	<= Jump_address WHEN jump_if='1' 	ELSE
  		PCBranch;
 	PROCESS(clock, reset)
 		BEGIN

@@ -9,7 +9,6 @@ USE IEEE.STD_LOGIC_ARITH.ALL;
 USE IEEE.STD_LOGIC_SIGNED.ALL;
 LIBRARY altera_mf;
 USE altera_mf.altera_mf_components.all;
-
 ENTITY MEMory IS
   PORT(	
 		Branch_mem	: IN	STD_LOGIC_VECTOR(2 DOWNTO 0);
@@ -57,5 +56,5 @@ BEGIN
 				(Negative_mem AND (NOT Overflow_mem)) OR ((NOT Negative_mem) AND Overflow_mem) OR  Zero_mem	WHEN Branch_mem="110" 	ELSE
 				(NOT Negative_mem) AND ((NOT negative_mem AND NOT Overflow_mem) OR (Negative_mem AND Overflow_mem))	WHEN Branch_mem="111" 	ELSE
 			'0' ; -- only for beq
-	branch_flush	<= ; -- only for beq
+	branch_flush	<= '0'; -- only for beq
 END behavior;

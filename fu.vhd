@@ -26,11 +26,11 @@ BEGIN
 
 -- TODO: use concurrent assignments for signals and outputs
 	
-	ForwardA	<= 	"01"	WHEN RegWrite_mem AND (write_register_mem/="00000") AND (write_register_mem/= Read_register_rs_ex)	ELSE --EX hazard
-				"10"	WHEN RegWrite_wb  AND  (write_register_mem/="00000") AND NOT (RegWrite_mem AND write_register_mem/="00000") AND (write_register_mem=read_register_rs_ex) AND (write_register_mem=read_register_rs_ex) 	ELSE
+	ForwardA	<= 	"01"	WHEN RegWrite_mem='1' AND (write_register_mem/="00000") AND (write_register_mem/= Read_register_rs_ex)	ELSE --EX hazard
+				"10"	WHEN RegWrite_wb='1'  AND  (write_register_mem/="00000") AND NOT (RegWrite_mem='1' AND write_register_mem/="00000") AND (write_register_mem=read_register_rs_ex) AND (write_register_mem=read_register_rs_ex) 	ELSE
 				"00";
-	ForwardB	<= 	"01"	WHEN RegWrite_mem AND (write_register_mem/="00000") AND (write_register_mem/= Read_register_rs_ex)	ELSE
-				"10"	WHEN RegWrite_wb  AND (write_register_mem/="00000") AND NOT (RegWrite_mem AND write_register_mem/="00000") AND (write_register_mem=read_register_rt_ex) AND (write_register_mem=read_register_rt_ex)	ELSE	
+	ForwardB	<= 	"01"	WHEN RegWrite_mem='1' AND (write_register_mem/="00000") AND (write_register_mem/= Read_register_rs_ex)	ELSE
+				"10"	WHEN RegWrite_wb='1'  AND (write_register_mem/="00000") AND NOT (RegWrite_mem='1' AND write_register_mem/="00000") AND (write_register_mem=read_register_rt_ex) AND (write_register_mem=read_register_rt_ex)	ELSE	
 				"00";
 -- According to Patterson & Hennessy's Book there is no WB hazard because it is
 -- assumed that on the same clock cycle the Register File is updated and read with 

@@ -29,7 +29,7 @@ ARCHITECTURE behavior OF control IS
 	SIGNAL R_format, Lw, Sw, B, Ori, sel: STD_LOGIC;
 BEGIN           
 	R_format 	<= 	'1'	WHEN Opcode = "000000" 	ELSE '0';
-   	Ori     	<= 	'0'	WHEN Opcode(3 DOWNTO 0) = "1111" ELSE '1';
+   Ori     	<= 	'0'	WHEN Opcode(3 DOWNTO 0) = "1111" ELSE '1';
 	Lw 		<= 	'1' 	WHEN Opcode = "100011" 	ELSE '0';
 	Sw 		<= 	'1' 	WHEN Opcode = "101011" 	ELSE '0';
 	B 		<= 	'1' 	WHEN Opcode(5 DOWNTO 3) = "000" and opcode/="000000"	ELSE '0';

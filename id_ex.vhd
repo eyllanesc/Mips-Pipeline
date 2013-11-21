@@ -54,15 +54,15 @@ BEGIN
 	PROCESS(clock, reset)
 		BEGIN
 		IF(reset='1') THEN
-			Jump_ex			<= 	(others=>'0');	
-			RegWrite_ex		<=	(others=>'0');
-			MemtoReg_ex		<=	(others=>'0');
+			Jump_ex			<= 	'0';	
+			RegWrite_ex		<=	'0';
+			MemtoReg_ex		<=	'0';
 			Branch_ex		<=	(others=>'0');
-			MemRead_ex		<=	(others=>'0');
-			MemWrite_ex		<=	(others=>'0');
-			RegDst_ex		<=	(others=>'0');
+			MemRead_ex		<=	'0';
+			MemWrite_ex		<=	'0';
+			RegDst_ex		<=	'0';
 			Aluop_ex		<=	(others=>'0');
-			AluSrc_ex		<=	(others=>'0');
+			AluSrc_ex		<=	'0';
 			Opcode_ex		<= 	(others=>'0');
 			PC_plus_4_ex		<= 	(others=>'0');
 			read_data_1_ex		<= 	(others=>'0');
@@ -81,7 +81,7 @@ BEGIN
 			MemWrite_ex		<=	MemWrite_id;
 			RegDst_ex		<=	RegDst_id;
 			Aluop_ex		<=	AluOp_id;
-			AluSrc_ex		<=	Opcode_id;
+			AluSrc_ex		<=	AluSrc_id;
 			Opcode_ex		<= 	Opcode_id;
 			PC_plus_4_ex		<= 	PC_plus_4_id;
 			read_data_1_ex		<=	read_data_1_id;

@@ -21,10 +21,10 @@ ARCHITECTURE behav OF HDU IS
 -- TODO: you may need to add convinient signals here
 BEGIN
 -- TODO: generate concurrent assignments for signals and outputs
-	bubble		<=	'1'	WHEN (NOT MemRead_ex) OR (MemRead_ex AND write_register_rt_ex=f_id_read_register_rs) OR (MemRead_ex AND write_register_rt_ex/=if_id_read_register_rt)	ELSE
+	bubble		<=	'1'	WHEN (MemRead_ex='0') OR (MemRead_ex='1' AND write_register_rt_ex=if_id_read_register_rs) OR (MemRead_ex='1' AND write_register_rt_ex/=if_id_read_register_rt)	ELSE
 				'0';
-	if_id_write	<= 	'1' 	WHEN (NOT MemRead_ex) OR (MemRead_ex AND write_register_rt_ex=f_id_read_register_rs) OR (MemRead_ex AND write_register_rt_ex/=if_id_read_register_rt)	ELSE
+	if_id_write	<= 	'1' 	WHEN (MemRead_ex='0') OR (MemRead_ex='1' AND write_register_rt_ex=if_id_read_register_rs) OR (MemRead_ex='1' AND write_register_rt_ex/=if_id_read_register_rt)	ELSE
 				'0';
-	PCwrite		<= 	'1' 	WHEN (NOT MemRead_ex) OR (MemRead_ex AND write_register_rt_ex=f_id_read_register_rs) OR (MemRead_ex AND write_register_rt_ex/=if_id_read_register_rt) 	ELSE
+	PCwrite		<= 	'1' 	WHEN (MemRead_ex='0') OR (MemRead_ex='1' AND write_register_rt_ex=if_id_read_register_rs) OR (MemRead_ex='1' AND write_register_rt_ex/=if_id_read_register_rt) 	ELSE
 				'0';
 END behav;

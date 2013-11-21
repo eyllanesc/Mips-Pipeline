@@ -5,9 +5,9 @@
 -- Universidad Nacional de Ingenieria
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-USE IEEE.STD_LOGIC_ARITH.ALL;
-USE IEEE.STD_LOGIC_SIGNED.ALL;
-
+--USE IEEE.STD_LOGIC_ARITH.ALL;
+--USE IEEE.STD_LOGIC_SIGNED.ALL;
+ use IEEE.NUMERIC_STD.all;
 ENTITY EXEcute IS
   PORT(	
 		Opcode_ex 		: IN 	STD_LOGIC_VECTOR( 5 DOWNTO 0); -- for arithmetic/logic I-format instructions
@@ -26,6 +26,7 @@ ENTITY EXEcute IS
 		Add_Result_ex 		: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
 		write_data_ex		: OUT	STD_LOGIC_VECTOR(31 DOWNTO 0);
 		write_register_ex	: OUT	STD_LOGIC_VECTOR( 4 DOWNTO 0);
+		ALU_Result_ex 		: OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 		ForwardA		: IN	STD_LOGIC_VECTOR( 1 DOWNTO 0); -- for FU
 		ForwardB		: IN	STD_LOGIC_VECTOR( 1 DOWNTO 0); -- for FU
 		ALU_Result_mem 		: IN	STD_LOGIC_VECTOR(31 DOWNTO 0); -- forwarded from MEM
@@ -40,13 +41,15 @@ ARCHITECTURE behavior OF EXEcute IS
 	SIGNAL ALU_ctl		: 	STD_LOGIC_VECTOR(3 DOWNTO 0);
 	SIGNAL Ainput,	Binput	:	STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL ALU_output_mux	:	STD_LOGIC_VECTOR(31 DOWNTO 0);
+	SIGNAL ALU_Result    :	STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL pre_Binput	:	STD_LOGIC_VECTOR(31 DOWNTO 0);	
 BEGIN
 -- TODO: add necessary concurrent assignments
+	Func_opcode<= Opcode_ex;
 	write_register_ex 	<=	write_register_rt_ex	WHEN	RegDst_ex ='0'	ELSE
 					write_register_rd_ex;
 	write_data_ex		<=	pre_Binput;
-	Add_Result_ex		<=	Sign_extend_ex(29 downto 0)&"00"+PC_plus_4_ex;
+	Add_Result_ex		<=	std_logic_vector(unsigned(Sign_extend_ex(29 downto 0)&"00")+unsigned(PC_plus_4_ex));
 	pre_Binput		<=	Read_data_2_ex	WHEN 	ForwardB="00"	ELSE
 					write_data_wb 	WHEN	ForwardA="01" 	ELSE
 					ALU_Result_mem WHEN 	ForwardA="10"	ELSE
@@ -75,7 +78,7 @@ BEGIN
 					WHEN "100101" => ALU_ctl <= B"0111"; -- or   rd,rs,rt
 					WHEN "100110" => ALU_ctl <= B"1001"; -- xor  rd,rs,rt
 					WHEN "100111" => ALU_ctl <= B"1010"; -- nor  rd,rs,rt
-					WHEN OTHERS => NULL; 
+					WHEN OTHERS => ALU_ctl<= (OTHERS => 'X'); 
 				END CASE;
 			WHEN "11" => 
 				CASE Opcode_ex IS
@@ -86,9 +89,9 @@ BEGIN
 					WHEN "001100" => ALU_ctl <= B"1110"; -- andi  rt,rs,const16 (rt <- rs and x0000::const16)
 					WHEN "001101" => ALU_ctl <= B"1111"; -- ori   rt,rs,const16 (rt <- rs or  x0000::const16)
 					WHEN "001110" => ALU_ctl <= B"1101"; -- xori  rt,rs,const16 (rt <- rs xor x0000::const16)
-					WHEN OTHERS => NULL;
+					WHEN OTHERS => ALU_ctl<= (OTHERS => 'X');
 				END CASE;
-			WHEN OTHERS => NULL;
+			WHEN OTHERS =>ALU_ctl<= (OTHERS => 'X');
 		END CASE;
 	END PROCESS;
 	PROCESS ( ALU_ctl, Ainput, Binput)
@@ -129,10 +132,11 @@ BEGIN
 		END CASE;
 	END PROCESS;
 	-- add a second process to generate the ALU_result_ex and Overflow_ex
-	ALU_Result_ex	<=	X"0000000" & B"000" & ALU_output_mux(31)	WHEN (ALU_ctl = "0100" OR ALU_ctl="0101") ELSE 
+	ALU_Result	<=	X"0000000" & B"000" & ALU_output_mux(31)	WHEN (ALU_ctl = "0100" OR ALU_ctl="0101") ELSE 
 				ALU_output_mux(31 DOWNTO 0);
-	Zero_ex	<=	'1'	WHEN	ALU_result_ex = X"00000000"	ELSE
+	ALU_Result_ex<= ALU_Result;
+	Zero_ex	<=	'1'	WHEN	ALU_result = X"00000000"	ELSE
 			'0';
-	Overflow_ex	<=	(ALU_result_ex(31) AND (NOT Ainput(31)) AND (NOT Binput(31))) OR ((NOT ALU_result_ex(31)) AND Ainput(31) AND Binput(31));
-	Negative_ex	<=	ALU_result_ex(31);
+	Overflow_ex	<=	(ALU_result(31) AND (NOT Ainput(31)) AND (NOT Binput(31))) OR ((NOT ALU_result(31)) AND Ainput(31) AND Binput(31));
+	Negative_ex	<=	ALU_result(31);
 END behavior;

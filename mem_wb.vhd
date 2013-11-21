@@ -29,8 +29,8 @@ BEGIN
 	PROCESS(clock, reset)
 		BEGIN
 			IF(reset='1')	THEN
-				RegWrite_wb 		<=	(others=>'0');
-				MemtoReg_wb 		<=	(others=>'0');
+				RegWrite_wb 		<=	'0';
+				MemtoReg_wb 		<=	'0';
 				read_data_wb		<=	(others=>'0');
 				ALU_Result_wb 		<=	(others=>'0');
 				write_register_wb	<=	(others=>'0');
