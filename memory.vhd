@@ -29,7 +29,7 @@ END MEMory;
 ARCHITECTURE behavior OF MEMory IS
 	
 	SIGNAL write_clock 	: STD_LOGIC;
-
+	SIGNAL temp			: STD_LOGIC;
 BEGIN
 	data_memory : altsyncram
 	GENERIC MAP (
@@ -50,11 +50,12 @@ BEGIN
 		
 	-- Load memory address register with write clock
 	write_clock	<= 	NOT clkd;
-	PCSrc_mem	<= 	Zero_mem	WHEN Branch_mem="100"	ELSE
+	temp	<= 	Zero_mem	WHEN Branch_mem="100"	ELSE
 				NOT Zero_mem 	WHEN Branch_mem="101"	ELSE
 				(Negative_mem AND (NOT Overflow_mem)) OR ((NOT Negative_mem) AND Overflow_mem)			WHEN Branch_mem="001" 	ELSE
 				(Negative_mem AND (NOT Overflow_mem)) OR ((NOT Negative_mem) AND Overflow_mem) OR  Zero_mem	WHEN Branch_mem="110" 	ELSE
 				(NOT Negative_mem) AND ((NOT negative_mem AND NOT Overflow_mem) OR (Negative_mem AND Overflow_mem))	WHEN Branch_mem="111" 	ELSE
 			'0' ; -- only for beq
-	branch_flush	<= '0'; -- only for beq
+	branch_flush	<= temp; -- only for beq
+	PCSrc_mem		<= temp;
 END behavior;
